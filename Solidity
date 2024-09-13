@@ -1,0 +1,33 @@
+// GreenToken.sol
+pragma solidity ^0.8.0;
+
+contract GreenToken {
+    string public name = "GreenToken";
+    string public symbol = "GRN";
+    uint8 public decimals = 18;
+    uint256 public totalSupply;
+
+    mapping(address => uint256) public balanceOf;
+
+    event Transfer(address indexed from, address indexed to, uint256 value);
+
+    constructor(uint256 _initialSupply) {
+        totalSupply = _initialSupply * (10 ** uint256(decimals));
+        balanceOf[msg.sender] = totalSupply; // Initially assign all tokens to contract deployer
+    }
+
+    function transfer(address _to, uint256 _value) public returns (bool success) {
+        require(balanceOf[msg.sender] >= _value, "Not enough tokens");
+        balanceOf[msg.sender] -= _value;
+        balanceOf[_to] += _value;
+        emit Transfer(msg.sender, _to, _value);
+        return true;
+    }
+
+    // Function to issue tokens
+    function issueTokens(address _to, uint256 _amount) public {
+        totalSupply += _amount;
+        balanceOf[_to] += _amount;
+        emit Transfer(address(0), _to, _amount);
+    }
+}
